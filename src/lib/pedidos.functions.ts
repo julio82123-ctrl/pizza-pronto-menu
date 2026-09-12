@@ -73,21 +73,17 @@ export const criarPedido = createServerFn({ method: "POST" })
       itens.reduce((sum, i) => sum + i.subtotal, 0).toFixed(2),
     );
 
-    const { data: pedido, error } = await supabase
-      .from("pedidos")
-      .insert({
-        cliente_nome: data.cliente_nome,
-        cliente_telefone: data.cliente_telefone,
-        cliente_endereco: data.cliente_endereco,
-        itens,
-        total,
-        forma_pagamento: data.forma_pagamento,
-        status: "recebido",
-      })
-      .select("id")
-      .single();
+    const { error } = await supabase.from("pedidos").insert({
+      cliente_nome: data.cliente_nome,
+      cliente_telefone: data.cliente_telefone,
+      cliente_endereco: data.cliente_endereco,
+      itens,
+      total,
+      forma_pagamento: data.forma_pagamento,
+      status: "recebido",
+    });
 
     if (error) throw new Error(error.message);
 
-    return { id: pedido.id, total };
+    return { total };
   });
