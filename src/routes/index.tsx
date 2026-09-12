@@ -82,7 +82,7 @@ function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
-            <Pizza className="h-5 w-5" />
+            <PizzaIcon className="h-5 w-5" />
           </div>
           <div>
             <h2 className="text-xl font-black leading-none tracking-tight text-foreground">
