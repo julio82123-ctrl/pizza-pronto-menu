@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, Pizza, Flame, Plus } from "lucide-react";
+import { ShoppingCart, Pizza as PizzaIcon, Flame, Plus } from "lucide-react";
 import { getAvailablePizzas, type Pizza } from "@/lib/pizzas.functions";
 
 export const Route = createFileRoute("/")({
