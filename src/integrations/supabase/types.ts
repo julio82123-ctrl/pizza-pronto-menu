@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      pedidos: {
+        Row: {
+          cliente_endereco: string
+          cliente_nome: string
+          cliente_telefone: string
+          created_at: string
+          forma_pagamento: string
+          id: string
+          itens: Json
+          status: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          cliente_endereco: string
+          cliente_nome: string
+          cliente_telefone: string
+          created_at?: string
+          forma_pagamento: string
+          id?: string
+          itens: Json
+          status?: string
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          cliente_endereco?: string
+          cliente_nome?: string
+          cliente_telefone?: string
+          created_at?: string
+          forma_pagamento?: string
+          id?: string
+          itens?: Json
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pizzas: {
         Row: {
           created_at: string | null
