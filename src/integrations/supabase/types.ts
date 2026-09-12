@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pizzas: {
+        Row: {
+          created_at: string | null
+          descricao: string | null
+          disponivel: boolean | null
+          id: string
+          imagem_url: string | null
+          nome: string
+          preco_g: number
+          preco_m: number
+          preco_p: number
+        }
+        Insert: {
+          created_at?: string | null
+          descricao?: string | null
+          disponivel?: boolean | null
+          id?: string
+          imagem_url?: string | null
+          nome: string
+          preco_g: number
+          preco_m: number
+          preco_p: number
+        }
+        Update: {
+          created_at?: string | null
+          descricao?: string | null
+          disponivel?: boolean | null
+          id?: string
+          imagem_url?: string | null
+          nome?: string
+          preco_g?: number
+          preco_m?: number
+          preco_p?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
