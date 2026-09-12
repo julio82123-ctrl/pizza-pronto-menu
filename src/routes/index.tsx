@@ -190,7 +190,7 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card px-6 py-16 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
-        <Pizza className="h-8 w-8 text-muted-foreground" />
+        <PizzaIcon className="h-8 w-8 text-muted-foreground" />
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">
         Nenhuma pizza disponível
