@@ -140,7 +140,7 @@ function PizzaCard({ pizza }: { pizza: Pizza }) {
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-secondary text-muted-foreground">
-            <Pizza className="h-12 w-12 opacity-40" />
+            <PizzaIcon className="h-12 w-12 opacity-40" />
             <span className="text-sm font-medium">Sem imagem</span>
           </div>
         )}
