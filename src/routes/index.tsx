@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, Pizza as PizzaIcon, Flame, Plus } from "lucide-react";
+import { Pizza as PizzaIcon, Flame, Plus, Check } from "lucide-react";
 import { getAvailablePizzas, type Pizza } from "@/lib/pizzas.functions";
+import { CartWidget } from "@/components/CartWidget";
+import { formatPrice, useCart, type Tamanho } from "@/lib/cart";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,13 +33,6 @@ export const Route = createFileRoute("/")({
   },
   component: MenuPage,
 });
-
-function formatPrice(value: number) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-}
 
 function MenuPage() {
   const { pizzas } = Route.useLoaderData();
@@ -71,7 +67,7 @@ function MenuPage() {
         )}
       </main>
 
-      <FixedCart />
+      <CartWidget />
     </div>
   );
 }
@@ -110,24 +106,31 @@ function Header() {
   );
 }
 
-function FixedCart() {
-  return (
-    <button
-      type="button"
-      aria-label="Carrinho de pedidos"
-      className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground pizza-shadow transition-all hover:bg-primary/90 hover:pizza-card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-    >
-      <div className="relative">
-        <ShoppingCart className="h-6 w-6" />
-        <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-cheese text-xs font-black text-foreground shadow-sm">
-          0
-        </span>
-      </div>
-    </button>
-  );
-}
+const TAMANHOS: Tamanho[] = ["P", "M", "G"];
 
 function PizzaCard({ pizza }: { pizza: Pizza }) {
+  const { addItem } = useCart();
+  const [tamanho, setTamanho] = useState<Tamanho>("M");
+  const [adicionado, setAdicionado] = useState(false);
+
+  const precos: Record<Tamanho, number> = {
+    P: pizza.preco_p,
+    M: pizza.preco_m,
+    G: pizza.preco_g,
+  };
+
+  function handleAdd() {
+    addItem({
+      pizzaId: pizza.id,
+      nome: pizza.nome,
+      tamanho,
+      precoUnitario: Number(precos[tamanho]),
+      imagemUrl: pizza.imagem_url,
+    });
+    setAdicionado(true);
+    window.setTimeout(() => setAdicionado(false), 1500);
+  }
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card text-card-foreground transition-all duration-300 pizza-shadow hover:pizza-card-hover">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
@@ -158,31 +161,47 @@ function PizzaCard({ pizza }: { pizza: Pizza }) {
         )}
 
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <PriceBadge label="P" price={pizza.preco_p} />
-          <PriceBadge label="M" price={pizza.preco_m} />
-          <PriceBadge label="G" price={pizza.preco_g} />
+          {TAMANHOS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTamanho(t)}
+              aria-pressed={tamanho === t}
+              className={`flex flex-col items-center rounded-2xl border-2 px-2 py-2.5 transition-colors ${
+                tamanho === t
+                  ? "border-primary bg-primary/5"
+                  : "border-transparent bg-secondary hover:border-primary/30"
+              }`}
+            >
+              <span className="text-xs font-bold text-muted-foreground">
+                {t}
+              </span>
+              <span className="text-sm font-black text-secondary-foreground">
+                {formatPrice(precos[t])}
+              </span>
+            </button>
+          ))}
         </div>
 
         <button
           type="button"
+          onClick={handleAdd}
           className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         >
-          <Plus className="h-4 w-4" />
-          Adicionar ao carrinho
+          {adicionado ? (
+            <>
+              <Check className="h-4 w-4" />
+              Adicionado!
+            </>
+          ) : (
+            <>
+              <Plus className="h-4 w-4" />
+              Adicionar ao carrinho ({tamanho})
+            </>
+          )}
         </button>
       </div>
     </article>
-  );
-}
-
-function PriceBadge({ label, price }: { label: string; price: number }) {
-  return (
-    <div className="flex flex-col items-center rounded-2xl bg-secondary px-2 py-2.5">
-      <span className="text-xs font-bold text-muted-foreground">{label}</span>
-      <span className="text-sm font-black text-secondary-foreground">
-        {formatPrice(price)}
-      </span>
-    </div>
   );
 }
 
