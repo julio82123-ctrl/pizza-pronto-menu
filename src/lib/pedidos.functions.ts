@@ -35,7 +35,7 @@ export const criarPedido = createServerFn({ method: "POST" })
 
     const pizzaIds = [...new Set(data.itens.map((i) => i.pizzaId))];
     const { data: pizzas, error: pizzasError } = await supabase
-      .from("pizzas")
+      .from("Pizzas")
       .select("id, nome, preco_p, preco_m, preco_g")
       .in("id", pizzaIds)
       .eq("disponivel", true);
@@ -87,3 +87,5 @@ export const criarPedido = createServerFn({ method: "POST" })
 
     return { total };
   });
+
+
