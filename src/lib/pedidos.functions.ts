@@ -73,7 +73,10 @@ export const criarPedido = createServerFn({ method: "POST" })
       itens.reduce((sum, i) => sum + i.subtotal, 0).toFixed(2),
     );
 
+    const id = crypto.randomUUID();
+
     const { error } = await supabase.from("pedidos").insert({
+      id,
       cliente_nome: data.cliente_nome,
       cliente_telefone: data.cliente_telefone,
       cliente_endereco: data.cliente_endereco,
@@ -85,7 +88,60 @@ export const criarPedido = createServerFn({ method: "POST" })
 
     if (error) throw new Error(error.message);
 
-    return { ok: true as const, total };
+    return { ok: true as const, total, id };
+  });
+
+export type PedidoPublicoItem = {
+  nome: string;
+  tamanho: string;
+  quantidade: number;
+  preco_unitario: number;
+  subtotal: number;
+};
+
+export type PedidoPublico = {
+  id: string;
+  cliente_nome: string;
+  itens: PedidoPublicoItem[];
+  total: number;
+  forma_pagamento: string;
+  status: string;
+  created_at: string;
+};
+
+/**
+ * Consulta pública de acompanhamento por id (uuid não adivinhável).
+ * Retorna apenas campos seguros — sem telefone nem endereço.
+ */
+export const obterPedidoPublico = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) =>
+    z.object({ id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data }): Promise<PedidoPublico | null> => {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    const { data: pedido, error } = await supabaseAdmin
+      .from("pedidos")
+      .select("id, cliente_nome, itens, total, forma_pagamento, status, created_at")
+      .eq("id", data.id)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (!pedido) return null;
+
+    return {
+      id: pedido.id,
+      cliente_nome: pedido.cliente_nome,
+      itens: (Array.isArray(pedido.itens)
+        ? pedido.itens
+        : []) as PedidoPublicoItem[],
+      total: Number(pedido.total),
+      forma_pagamento: pedido.forma_pagamento,
+      status: pedido.status,
+      created_at: pedido.created_at,
+    };
   });
 
 
