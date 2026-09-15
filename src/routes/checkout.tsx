@@ -65,7 +65,7 @@ function CheckoutPage() {
 
     setEnviando(true);
     try {
-      await enviarPedido({
+      const resultado = await enviarPedido({
         data: {
           cliente_nome: nome.trim(),
           cliente_telefone: telefone.trim(),
@@ -80,6 +80,15 @@ function CheckoutPage() {
           })),
         },
       });
+      if (
+        !resultado ||
+        typeof resultado !== "object" ||
+        (resultado as { ok?: boolean }).ok !== true
+      ) {
+        throw new Error(
+          "Não foi possível confirmar o pedido. Tente novamente em instantes.",
+        );
+      }
       clearCart();
       setSucesso(true);
       router.invalidate();
